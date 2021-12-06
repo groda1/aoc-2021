@@ -21,16 +21,23 @@ pub fn main() -> io::Result<()> {
         let y1: usize = y1_str.parse().unwrap();
         let x1: usize = x1_str.parse().unwrap();
 
-        if y0 == y1 { // horizontal
+        if y0 == y1 {
+            // horizontal
             for i in x0.min(x1)..=x0.max(x1) {
                 array[y0 * WIDTH + i] += 1;
             }
-        } else if x0 == x1 { // vertical
+        } else if x0 == x1 {
+            // vertical
             for i in y0.min(y1)..=y0.max(y1) {
                 array[i * WIDTH + x0] += 1;
             }
-        } else { // diagonal
-            let (mut x, up) = if y0 > y1 { (x1, x0 > x1) } else { (x0, x1 > x0) };
+        } else {
+            // diagonal
+            let (mut x, up) = if y0 > y1 {
+                (x1, x0 > x1)
+            } else {
+                (x0, x1 > x0)
+            };
             for i in y0.min(y1)..=y0.max(y1) {
                 array[i * WIDTH + x] += 1;
                 if up {
