@@ -10,21 +10,31 @@ pub fn main() -> io::Result<()> {
     let mut depth = 0;
     let mut aim = 0;
 
-     f.lines()
-        .for_each(|l| {
-            let derp = l.unwrap();
-            let mut split = derp.split(' ');
-            let dir = split.next();
-            let val: u32 = split.next().unwrap().parse().unwrap();
+    f.lines().for_each(|l| {
+        let derp = l.unwrap();
+        let mut split = derp.split(' ');
+        let dir = split.next();
+        let val: u32 = split.next().unwrap().parse().unwrap();
 
-            match dir {
-                None => { unreachable!()}
-                Some("forward") => { forward += val; depth += aim * val;}
-                Some("down") => {aim += val;}
-                Some("up") => {aim -= val;}
-                _ => {unreachable!()}
+        match dir {
+            None => {
+                unreachable!()
             }
-        });
+            Some("forward") => {
+                forward += val;
+                depth += aim * val;
+            }
+            Some("down") => {
+                aim += val;
+            }
+            Some("up") => {
+                aim -= val;
+            }
+            _ => {
+                unreachable!()
+            }
+        }
+    });
 
     println!("foo: {}", forward * depth);
 
