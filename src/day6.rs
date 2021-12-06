@@ -9,17 +9,14 @@ pub fn main() -> Result<(), ()> {
            fish[f.parse::<usize>().unwrap()] += 1;
        });
 
-    let days = 256;
-
-    for _ in 0..days {
-        let new_count = fish[0];
+    for _ in 0..256 {
+        let new = fish[0];
         fish[0] = 0;
-
         for i in 1..fish.len() {
             fish[i - 1] = fish[i];
         }
-        fish[6] += new_count;
-        fish[8] += new_count;
+        fish[6] += new;
+        fish[8] += new;
     }
 
     println!("foo {}", fish.iter().sum::<u64>());
