@@ -81,13 +81,18 @@ pub fn mark(board: &mut Vec<(u32, bool)>, num: u32) {
 pub fn verify(board: &[(u32, bool)]) -> Option<u32> {
     let mut complete = false;
     for i in 0..5 {
-        complete |= board[i * 5].1 & board[i * 5 + 1].1 & board[i * 5 + 2].1 & board[i * 5 + 3].1 & board[i * 5 + 4].1;
+        complete |= board[i * 5].1
+            & board[i * 5 + 1].1
+            & board[i * 5 + 2].1
+            & board[i * 5 + 3].1
+            & board[i * 5 + 4].1;
     }
     if complete {
         return Some(board.iter().filter(|n| !n.1).map(|n| n.0).sum());
     }
     for i in 0..5 {
-        complete |= board[i].1 & board[5 + i].1 & board[10 + i].1 & board[15 + i].1 & board[20 + i].1;
+        complete |=
+            board[i].1 & board[5 + i].1 & board[10 + i].1 & board[15 + i].1 & board[20 + i].1;
     }
     if complete {
         return Some(board.iter().filter(|n| !n.1).map(|n| n.0).sum());
