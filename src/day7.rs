@@ -6,9 +6,7 @@ pub fn main() -> Result<(), ()> {
     let mut min_cost_pt1 = u32::MAX;
     let mut min_cost_pt2 = u32::MAX;
 
-    let min = *crabs.iter().min().unwrap();
-    let max = *crabs.iter().max().unwrap();
-    for i in min..max {
+    for i in *crabs.iter().min().unwrap()..*crabs.iter().max().unwrap() {
         let new_1 = cost_pt1(&crabs, i);
         min_cost_pt1 = min_cost_pt1.min(new_1);
         let new_2 = cost_pt2(&crabs, i);
