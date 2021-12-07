@@ -4,7 +4,7 @@ pub fn main() -> Result<(), ()> {
     crabs.sort();
 
     let min_cost_pt1 = cost_pt1(&crabs, crabs[crabs.len() / 2]);
-    let min_cost_pt2 = cost_pt2(&crabs, crabs.iter().sum::<u32>()/crabs.len() as u32);
+    let min_cost_pt2 = cost_pt2(&crabs, crabs.iter().sum::<u32>() / crabs.len() as u32);
 
     println!("min cost 1 {:?}", min_cost_pt1);
     println!("min cost 2 {:?}", min_cost_pt2);
