@@ -4,7 +4,6 @@ use std::io;
 use std::io::{BufRead, BufReader};
 
 use crate::Segment::{Bot, BotLeft, BotRight, Mid, Top, TopLeft, TopRight};
-use itertools::Itertools;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 enum Segment {
@@ -24,7 +23,6 @@ pub fn main() -> io::Result<()> {
     let mut sum = 0;
 
     for l in f.lines() {
-        let mut map = HashMap::new();
         let line = l.unwrap();
 
         let mut one: Option<HashSet<char>> = None;
@@ -38,10 +36,8 @@ pub fn main() -> io::Result<()> {
         for w in codes.iter() {
             if w.len() == 2 {
                 one = Some(w.chars().collect());
-                map.insert(w.chars().collect::<String>(), 1);
             } else if w.len() == 4 {
                 four = Some(w.chars().collect());
-                map.insert(w.chars().sorted().collect::<String>(), 4);
             }
         }
 
