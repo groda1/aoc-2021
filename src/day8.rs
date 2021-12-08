@@ -25,8 +25,8 @@ pub fn main() -> io::Result<()> {
     for l in f.lines() {
         let line = l.unwrap();
 
-        let mut one: Option<HashSet<char>> = None;
-        let mut four: Option<HashSet<char>> = None;
+        let mut one = HashSet::new();
+        let mut four = HashSet::new();
 
         let (input, digits) = line.split_once(" | ").unwrap();
 
@@ -35,9 +35,9 @@ pub fn main() -> io::Result<()> {
 
         for w in codes.iter() {
             if w.len() == 2 {
-                one = Some(w.chars().collect());
+                one = w.chars().collect();
             } else if w.len() == 4 {
-                four = Some(w.chars().collect());
+                four = w.chars().collect();
             }
         }
 
@@ -58,14 +58,14 @@ pub fn main() -> io::Result<()> {
                     segments.insert(c, TopLeft);
                 }
                 8 => {
-                    if one.as_ref().unwrap().contains(&c) {
+                    if one.contains(&c) {
                         segments.insert(c, TopRight);
                     } else {
                         segments.insert(c, Top);
                     }
                 }
                 7 => {
-                    if four.as_ref().unwrap().contains(&c) {
+                    if four.contains(&c) {
                         segments.insert(c, Mid);
                     } else {
                         segments.insert(c, Bot);
