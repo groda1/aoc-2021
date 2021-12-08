@@ -52,9 +52,15 @@ pub fn main() -> io::Result<()> {
                 .count();
 
             match sum {
-                4 => segments.insert(c, BotLeft),
-                9 => segments.insert(c, BotRight),
-                6 => segments.insert(c, TopLeft),
+                4 => {
+                    segments.insert(c, BotLeft);
+                }
+                9 => {
+                    segments.insert(c, BotRight);
+                }
+                6 => {
+                    segments.insert(c, TopLeft);
+                }
                 8 => {
                     if one.as_ref().unwrap().contains(&c) {
                         segments.insert(c, TopRight);
@@ -73,48 +79,52 @@ pub fn main() -> io::Result<()> {
             }
         }
 
-        let mut number_str = String::new();
-        for digit in digits.split(' ') {
-            let mut active_segments = HashSet::new();
-            for c in digit.chars() {
-                active_segments.insert(*segments.get(&c).unwrap());
-            }
-
-            if active_segments.len() == 6 && !active_segments.contains(&Mid) {
-                number_str.push('0');
-            } else if active_segments.len() == 2 {
-                number_str.push('1');
-            } else if active_segments.len() == 5
-                && !active_segments.contains(&TopLeft)
-                && !active_segments.contains(&BotRight)
-            {
-                number_str.push('2');
-            } else if active_segments.len() == 5
-                && !active_segments.contains(&TopLeft)
-                && !active_segments.contains(&BotLeft)
-            {
-                number_str.push('3');
-            } else if active_segments.len() == 4 {
-                number_str.push('4');
-            } else if active_segments.len() == 5
-                && !active_segments.contains(&TopRight)
-                && !active_segments.contains(&BotLeft)
-            {
-                number_str.push('5');
-            } else if active_segments.len() == 6 && !active_segments.contains(&TopRight) {
-                number_str.push('6');
-            } else if active_segments.len() == 3 {
-                number_str.push('7');
-            } else if active_segments.len() == 7 {
-                number_str.push('8');
-            } else if active_segments.len() == 6 && !active_segments.contains(&BotLeft) {
-                number_str.push('9');
-            }
-        }
-        sum += number_str.parse::<u32>().unwrap();
+        sum += map_number(digits, &segments);
     }
 
     println!("foo {}", sum);
 
     Ok(())
+}
+
+fn map_number(digits: &str, segments: &HashMap<char, Segment>) -> u32 {
+    let mut number_str = String::new();
+    for digit in digits.split(' ') {
+        let mut active_segments = HashSet::new();
+        for c in digit.chars() {
+            active_segments.insert(*segments.get(&c).unwrap());
+        }
+
+        if active_segments.len() == 6 && !active_segments.contains(&Mid) {
+            number_str.push('0');
+        } else if active_segments.len() == 2 {
+            number_str.push('1');
+        } else if active_segments.len() == 5
+            && !active_segments.contains(&TopLeft)
+            && !active_segments.contains(&BotRight)
+        {
+            number_str.push('2');
+        } else if active_segments.len() == 5
+            && !active_segments.contains(&TopLeft)
+            && !active_segments.contains(&BotLeft)
+        {
+            number_str.push('3');
+        } else if active_segments.len() == 4 {
+            number_str.push('4');
+        } else if active_segments.len() == 5
+            && !active_segments.contains(&TopRight)
+            && !active_segments.contains(&BotLeft)
+        {
+            number_str.push('5');
+        } else if active_segments.len() == 6 && !active_segments.contains(&TopRight) {
+            number_str.push('6');
+        } else if active_segments.len() == 3 {
+            number_str.push('7');
+        } else if active_segments.len() == 7 {
+            number_str.push('8');
+        } else if active_segments.len() == 6 && !active_segments.contains(&BotLeft) {
+            number_str.push('9');
+        }
+    }
+    number_str.parse().unwrap()
 }
