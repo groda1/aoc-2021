@@ -3,8 +3,8 @@ use std::fs::File;
 use std::io;
 use std::io::{BufRead, BufReader};
 
-use itertools::Itertools;
 use crate::Segment::{Bot, BotLeft, BotRight, Mid, Top, TopLeft, TopRight};
+use itertools::Itertools;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 enum Segment {
@@ -14,7 +14,7 @@ enum Segment {
     Mid,
     BotLeft,
     BotRight,
-    Bot
+    Bot,
 }
 
 pub fn main() -> io::Result<()> {
@@ -27,8 +27,8 @@ pub fn main() -> io::Result<()> {
         let mut map = HashMap::new();
         let line = l.unwrap();
 
-        let mut one :Option<HashSet<char>> = None;
-        let mut four :Option<HashSet<char>> = None;
+        let mut one: Option<HashSet<char>> = None;
+        let mut four: Option<HashSet<char>> = None;
 
         let (input, digits) = line.split_once(" | ").unwrap();
 
@@ -45,13 +45,16 @@ pub fn main() -> io::Result<()> {
             }
         }
 
-        for c in ['a','b','c','d','e','f','g'] {
-            let sum = codes.iter().filter(|n| n.chars().any(|character| c == character )).count();
+        for c in ['a', 'b', 'c', 'd', 'e', 'f', 'g'] {
+            let sum = codes
+                .iter()
+                .filter(|n| n.chars().any(|character| c == character))
+                .count();
 
             match sum {
-                4 => { segments.insert(c, BotLeft); }
-                9 => { segments.insert(c, BotRight); }
-                6 => { segments.insert(c, TopLeft); }
+                4 => segments.insert(c, BotLeft),
+                9 => segments.insert(c, BotRight),
+                6 => segments.insert(c, TopLeft),
                 8 => {
                     if one.as_ref().unwrap().contains(&c) {
                         segments.insert(c, TopRight);
@@ -66,9 +69,8 @@ pub fn main() -> io::Result<()> {
                         segments.insert(c, Bot);
                     }
                 }
-                _ => unreachable!()
+                _ => unreachable!(),
             }
-
         }
 
         let mut number_str = String::new();
@@ -82,13 +84,22 @@ pub fn main() -> io::Result<()> {
                 number_str.push('0');
             } else if active_segments.len() == 2 {
                 number_str.push('1');
-            } else if active_segments.len() == 5 && !active_segments.contains(&TopLeft) && !active_segments.contains(&BotRight) {
+            } else if active_segments.len() == 5
+                && !active_segments.contains(&TopLeft)
+                && !active_segments.contains(&BotRight)
+            {
                 number_str.push('2');
-            } else if active_segments.len() == 5 && !active_segments.contains(&TopLeft) && !active_segments.contains(&BotLeft) {
+            } else if active_segments.len() == 5
+                && !active_segments.contains(&TopLeft)
+                && !active_segments.contains(&BotLeft)
+            {
                 number_str.push('3');
             } else if active_segments.len() == 4 {
                 number_str.push('4');
-            } else if active_segments.len() == 5 && !active_segments.contains(&TopRight) && !active_segments.contains(&BotLeft) {
+            } else if active_segments.len() == 5
+                && !active_segments.contains(&TopRight)
+                && !active_segments.contains(&BotLeft)
+            {
                 number_str.push('5');
             } else if active_segments.len() == 6 && !active_segments.contains(&TopRight) {
                 number_str.push('6');
