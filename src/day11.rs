@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fs::File;
 use std::io;
 use std::io::{BufRead, BufReader};
@@ -8,8 +9,8 @@ struct Octopus {
     flashed: bool,
 }
 
-const WIDTH: usize = 10;
-const HEIGHT: usize = 10;
+const WIDTH: i32 = 10;
+const HEIGHT: i32 = 10;
 
 pub fn main() -> io::Result<()> {
     let f = File::open("resources/day11")?;
@@ -17,14 +18,21 @@ pub fn main() -> io::Result<()> {
     let lines: Vec<String> = f.lines().map(|l| l.unwrap()).collect();
 
     {
-        let mut octos: Vec<Octopus> = lines
+        let mut octos: HashMap<(i32, i32), Octopus> = lines
             .iter()
             .flat_map(|l| l.chars())
-            .map(|c| Octopus {
-                level: c.to_digit(10).unwrap(),
-                flashed: false,
+            .enumerate()
+            .map(|(idx, c)| {
+                (
+                    (idx as i32 % WIDTH, idx as i32 / WIDTH),
+                    Octopus {
+                        level: c.to_digit(10).unwrap(),
+                        flashed: false,
+                    },
+                )
             })
             .collect();
+
         let mut flashes = 0;
         for _ in 0..100 {
             step(&mut octos, &mut flashes)
@@ -33,12 +41,18 @@ pub fn main() -> io::Result<()> {
     }
 
     {
-        let mut octos: Vec<Octopus> = lines
+        let mut octos: HashMap<(i32, i32), Octopus> = lines
             .iter()
             .flat_map(|l| l.chars())
-            .map(|c| Octopus {
-                level: c.to_digit(10).unwrap(),
-                flashed: false,
+            .enumerate()
+            .map(|(idx, c)| {
+                (
+                    (idx as i32 % WIDTH, idx as i32 / WIDTH),
+                    Octopus {
+                        level: c.to_digit(10).unwrap(),
+                        flashed: false,
+                    },
+                )
             })
             .collect();
         let mut flashes = 0;
@@ -47,7 +61,7 @@ pub fn main() -> io::Result<()> {
             step(&mut octos, &mut flashes);
             i += 1;
 
-            if octos.iter().all(|o| o.level == 0) {
+            if octos.values().all(|o| o.level == 0) {
                 break;
             }
         }
@@ -57,52 +71,48 @@ pub fn main() -> io::Result<()> {
     Ok(())
 }
 
-fn step(octos: &mut Vec<Octopus>, flashes: &mut i32) {
-    octos.iter_mut().for_each(|o| o.level += 1);
+fn step(octos: &mut HashMap<(i32, i32), Octopus>, flashes: &mut u32) {
+    octos.values_mut().for_each(|o| o.level += 1);
     loop {
         let mut done = true;
-        for i in 0..WIDTH * HEIGHT {
-            if octos[i].level > 9 && !octos[i].flashed {
-                done = false;
-                let left = i % WIDTH > 0;
-                let right = i % WIDTH < (WIDTH - 1);
-                let up = i / WIDTH > 0;
-                let down = i / WIDTH < (HEIGHT - 1);
-
-                if left {
-                    octos[i - 1].level += 1;
+        for x in 0..WIDTH {
+            for y in 0..HEIGHT {
+                let mut flashed = false;
+                if let Some(octo) = octos.get_mut(&(x, y)) {
+                    if octo.level > 9 && !octo.flashed {
+                        done = false;
+                        *flashes += 1;
+                        octo.flashed = true;
+                        flashed = true;
+                    }
                 }
-                if right {
-                    octos[i + 1].level += 1;
+                if flashed {
+                    for adjacent in [
+                        (-1, 0),
+                        (1, 0),
+                        (0, -1),
+                        (0, 1),
+                        (-1, -1),
+                        (1, 1),
+                        (-1, 1),
+                        (1, -1),
+                    ] {
+                        if let Some(adjacent_octo) =
+                            octos.get_mut(&(x + adjacent.0, y + adjacent.1))
+                        {
+                            adjacent_octo.level += 1;
+                        }
+                    }
                 }
-                if up {
-                    octos[i - WIDTH].level += 1;
-                }
-                if down {
-                    octos[i + WIDTH].level += 1;
-                }
-                if left && up {
-                    octos[i - 1 - WIDTH].level += 1;
-                }
-                if left && down {
-                    octos[i - 1 + WIDTH].level += 1;
-                }
-                if right && up {
-                    octos[i + 1 - WIDTH].level += 1;
-                }
-                if right && down {
-                    octos[i + 1 + WIDTH].level += 1;
-                }
-                *flashes += 1;
-                octos[i].flashed = true;
             }
         }
+
         if done {
             octos
-                .iter_mut()
+                .values_mut()
                 .filter(|o| o.level > 9)
                 .for_each(|o| o.level = 0);
-            octos.iter_mut().for_each(|o| o.flashed = false);
+            octos.values_mut().for_each(|o| o.flashed = false);
             break;
         }
     }
