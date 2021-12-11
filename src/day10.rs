@@ -7,9 +7,9 @@ pub fn main() -> io::Result<()> {
     let f = File::open("resources/day10")?;
     let f = BufReader::new(f);
 
-    let syntax = [('[', ']'), ('(', ')'), ('{', '}'), ('<', '>')];
+    let syntax = HashMap::from([('[', ']'), ('(', ')'), ('{', '}'), ('<', '>')]);
     let score = HashMap::from([(')', 3), (']', 57), ('}', 1197), ('>', 25137)]);
-    let score_pt2 = HashMap::from([('(', 1), ('[', 2), ('{', 3), ('<', 4)]);
+    let score_pt2 = HashMap::from([(')', 1), (']', 2), ('}', 3), ('>', 4)]);
     let lines: Vec<String> = f.lines().map(|l| l.unwrap()).collect();
 
     let pt1: u32 = lines
@@ -17,19 +17,15 @@ pub fn main() -> io::Result<()> {
         .map(|l| {
             let mut stack = Vec::new();
             for c in l.chars().into_iter() {
-                if syntax.map(|c| c.0).contains(&c) {
-                    stack.push(c);
+                if syntax.contains_key(&c) {
+                    stack.push(*syntax.get(&c).unwrap());
+                } else if stack.pop().unwrap() == c {
+                    continue;
                 } else {
-                    if stack.pop().unwrap()
-                        == syntax.iter().find(|s| s.1 == c).map(|s| s.0).unwrap()
-                    {
-                        continue;
-                    } else {
-                        return *score.get(&c).unwrap();
-                    }
+                    return *score.get(&c).unwrap();
                 }
             }
-            return 0;
+            0
         })
         .sum();
 
@@ -40,16 +36,12 @@ pub fn main() -> io::Result<()> {
         .map(|l| {
             let mut stack = Vec::new();
             for c in l.chars().into_iter() {
-                if syntax.map(|c| c.0).contains(&c) {
-                    stack.push(c);
+                if syntax.contains_key(&c) {
+                    stack.push(*syntax.get(&c).unwrap());
+                } else if stack.pop().unwrap() == c {
+                    continue;
                 } else {
-                    if stack.pop().unwrap()
-                        == syntax.iter().find(|s| s.1 == c).map(|s| s.0).unwrap()
-                    {
-                        continue;
-                    } else {
-                        return 0;
-                    }
+                    return 0;
                 }
             }
             stack
@@ -60,7 +52,7 @@ pub fn main() -> io::Result<()> {
         })
         .filter(|s| *s > 0)
         .collect();
-    pt2.sort();
+    pt2.sort_unstable();
 
     println!("pt2 {}", pt2[pt2.len() / 2]);
 
